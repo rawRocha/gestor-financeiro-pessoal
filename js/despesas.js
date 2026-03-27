@@ -5,7 +5,12 @@ import {
   addDoc,
   serverTimestamp,
   getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+let despesaEditandoId = null;
 
 export async function salvarDespesa(despesa) {
   const user = auth.currentUser;
@@ -16,12 +21,28 @@ export async function salvarDespesa(despesa) {
   }
 
   try {
-    await addDoc(collection(db, "usuarios", user.uid, "despesas"), {
-      ...despesa,
-      createdAt: serverTimestamp(),
-    });
+    if (despesaEditandoId) {
+      await updateDoc(
+        doc(db, "usuarios", user.uid, "despesas", despesaEditandoId),
+        despesa,
+      );
 
-    console.log("Despesa salva com sucesso");
+      despesaEditandoId = null;
+
+      carregarDespesas();
+    } else {
+      await addDoc(collection(db, "usuarios", user.uid, "despesas"), {
+        ...despesa,
+        createdAt: serverTimestamp(),
+      });
+    }
+
+    const modalElement = document.getElementById("modalDespesa");
+    const modal = bootstrap.Modal.getInstance(modalElement);
+    modal.hide();
+
+    document.activeElement.blur();
+    document.getElementById("formDespesa").reset();
     carregarDespesas();
   } catch (error) {
     console.error("Erro ao salvar despesa:", error);
@@ -53,8 +74,8 @@ function renderizarDespesas(snapshot) {
   // remove tudo menos o cabeçalho
   lista.querySelectorAll(".despesa-item").forEach((el) => el.remove());
 
-  snapshot.forEach((doc) => {
-    const despesa = doc.data();
+  snapshot.forEach((docSnap) => {
+    const despesa = docSnap.data();
 
     total += Number(despesa.valor);
 
@@ -73,11 +94,11 @@ function renderizarDespesas(snapshot) {
         <div class="col-3 text-end">
           <div class="d-flex justify-content-end flex-nowrap overflow-auto">
 
-            <button class="btn btn-sm me-2">
+            <button class="btn btn-sm me-2 btn-edit">
               <img src="img/edit_icon.svg" width="20">
             </button>
 
-            <button class="btn btn-sm me-2">
+            <button class="btn btn-sm me-2 btn-delete">
               <img src="img/delete_icon.svg" width="20">
             </button>
 
@@ -90,6 +111,63 @@ function renderizarDespesas(snapshot) {
 
       </div>
     `;
+
+    const btnDelete = li.querySelector(".btn-delete");
+
+    btnDelete.addEventListener("click", async () => {
+      const user = auth.currentUser;
+
+      if (!user) return;
+
+      const confirmar = confirm("Deseja excluir está despesa?");
+      if (!confirmar) return;
+
+      try {
+        await deleteDoc(doc(db, "usuarios", user.uid, "despesas", docSnap.id));
+
+        carregarDespesas();
+      } catch (error) {
+        console.log("Erro ao deletar despesa: " + error);
+      }
+    });
+
+    const btnEdit = li.querySelector(".btn-edit");
+
+    btnEdit.addEventListener("click", () => {
+      despesaEditandoId = docSnap.id;
+
+      // ✅ preenche os inputs corretamente
+      document.getElementById("descricaoDespesa").value = despesa.descricao;
+      document.getElementById("responsavelDespesa").value = despesa.responsavel;
+      document.getElementById("valorDespesa").value = despesa.valor;
+      document.getElementById("vencimentoDespesa").value = despesa.vencimento;
+
+      document.getElementById("totalParcelas").value =
+        despesa.totalParcelas || "";
+      document.getElementById("parcelaAtual").value =
+        despesa.parcelaAtual || "";
+      document.getElementById("categoriaDespesa").value =
+        despesa.categoria || "";
+      document.getElementById("statusDespesa").value = despesa.status || "";
+
+      // ✅ marcar radio (recorrente)
+      if (despesa.recorrente === true) {
+        document.querySelector(
+          'input[name="recorrenteDespesa"][value="true"]',
+        ).checked = true;
+      } else {
+        document.querySelector(
+          'input[name="recorrenteDespesa"][value="false"]',
+        ).checked = true;
+      }
+
+      // ✅ abre modal
+      const modal = bootstrap.Modal.getOrCreateInstance(
+        document.getElementById("modalDespesa"),
+      );
+
+      modal.show();
+    });
 
     lista.appendChild(li);
   });

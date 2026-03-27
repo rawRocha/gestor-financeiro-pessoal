@@ -190,8 +190,41 @@
             </div>
           </div>
         </div>
-        <button class="btn mt-3">
-          Adicionar nova despesa
+        <button
+          class="btn mt-3"
+          data-bs-toggle="modal"
+          data-bs-target="#modalDespesa"
+        >
+          Adicionar nova Despesa
+          <img src="img/add_circle.svg" style="width: 2rem" alt="" />
+        </button>
+      </div>
+
+      <div class="container shadow p-3 mb-5 bg-body-tertiary rounded">
+        <div class="container-fluid shadow-sm p-3 bg-body-tertiary rounded">
+          <div class="card">
+            <div class="card-header text-center fw-bold">LISTA DE RECEITAS</div>
+
+            <!-- Wrapper com scroll -->
+            <div class="overflow-auto">
+              <ul class="list-group list-group-flush" id="listaReceitas">
+                <li class="list-group-item bg-light fw-bold">
+                  <div class="row flex-nowrap" style="min-width: 700px">
+                    <div class="col-4">Descrição</div>
+                    <div class="col-2">Valor</div>
+                    <div class="col-3 text-center">Ações</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <button
+          class="btn mt-3"
+          data-bs-toggle="modal"
+          data-bs-target="#modalReceita"
+        >
+          Adicionar nova Receita
           <img src="img/add_circle.svg" style="width: 2rem" alt="" />
         </button>
       </div>
