@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <title>Minhas Despesas</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS v5.2.1 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+
+  <body>
+    <header>
+      <!-- place navbar here -->
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <div class="dropdown">
+            <a
+              class="navbar-brand dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <img src="img/user_icon.svg" width="50" alt="Usuário" />
+            </a>
+
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Perfil</a></li>
+              <li><a class="dropdown-item" href="#">Configurações</a></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item text-danger" id="logout" href="#"
+                  >Sair</a
+                >
+              </li>
+            </ul>
+          </div>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Adicionar
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalReceita"
+                      >Receita</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalDespesa"
+                      >Despesa</a
+                    >
+                  </li>
+                </ul>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Gerar PDF
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Resumo mensal</a></li>
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      >Despesas por Responsavel</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <form class="d-flex" role="search">
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <button class="btn btn-outline-success" type="submit">
+                Search
+              </button>
+            </form>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="container mt-3">
+        <div class="mb-3">
+          <select
+            class="form-select fs-5 border-0"
+            style="width: 14rem"
+            id="mes"
+          >
+            <option value="1">Janeiro</option>
+            <option value="2">Fevereiro</option>
+            <option value="3" selected>Março</option>
+            <option value="4">Abril</option>
+            <option value="5">Maio</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="container">
+        <div
+          class="row d-flex mt-3 text-center shadow p-3 mb-5 bg-body-tertiary rounded align-itens-centers justify-content-center"
+        >
+          <div class="col-lg-5 p-2">
+            <h2>DESPESAS</h2>
+            <p id="totalDespesas">0,00 R$</p>
+            <img src="img/arrow_circle_down.svg" style="width: 50px" alt="" />
+          </div>
+          <div class="col-lg-5 p-2">
+            <h2>RECEITAS</h2>
+            <p id="valorReceitas">0,00 R$</p>
+            <img src="img/arrow_circle_up.svg" style="width: 50px" alt="" />
+          </div>
+        </div>
+      </div>
+
+      <div class="container mb-1">
+        <button type="button" class="btn btn-danger btn-sm rounded-pill">
+          PENDENTES
+        </button>
+        <button type="button" class="btn btn-success btn-sm rounded-pill">
+          PROCESSADAS
+        </button>
+      </div>
+
+      <div class="container shadow p-3 mb-5 bg-body-tertiary rounded">
+        <div class="container-fluid shadow-sm p-3 bg-body-tertiary rounded">
+          <div class="card">
+            <div class="card-header text-center fw-bold">LISTA DE DESPESAS</div>
+
+            <!-- Wrapper com scroll -->
+            <div class="overflow-auto">
+              <ul class="list-group list-group-flush" id="listaDespesas">
+                <li class="list-group-item bg-light fw-bold">
+                  <div class="row flex-nowrap" style="min-width: 700px">
+                    <div class="col-4">Descrição</div>
+                    <div class="col-3">Responsável</div>
+                    <div class="col-2">Valor</div>
+                    <div class="col-3 text-center">Ações</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <button class="btn mt-3">
+          Adicionar nova despesa
+          <img src="img/add_circle.svg" style="width: 2rem" alt="" />
+        </button>
+      </div>
+    </main>
+    <footer>
+      <!-- place footer here -->
+    </footer>
+
+    <!-- Modal Receita -->
+    <div
+      class="modal fade"
+      id="modalReceita"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              Nova Receita
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formReceita">
+              <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="descricaoReceita"
+                  placeholder="Ex: Salário, freelance"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Valor</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="valorReceita"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Mês</label>
+                <select class="form-select" id="mesReceita">
+                  <option value="1">Janeiro</option>
+                  <option value="2">Fevereiro</option>
+                  <option value="3">Março</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Maio</option>
+                  <option value="6">Junho</option>
+                  <option value="7">Julho</option>
+                  <option value="8">Agosto</option>
+                  <option value="9">Setembro</option>
+                  <option value="10">Outubro</option>
+                  <option value="11">Novembro</option>
+                  <option value="12">Dezembro</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" form="formReceita" class="btn btn-primary">
+              Salvar Receita
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Despesa -->
+    <div
+      class="modal fade"
+      id="modalDespesa"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              Nova Despesa
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formDespesa">
+              <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="descricaoDespesa"
+                  placeholder="Ex: Banco x, condomino"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Responsavel</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="responsavelDespesa"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Valor</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="valorDespesa"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Vencimento</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="vencimentoDespesa"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Recorrente</label>
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="recorrenteDespesa"
+                    id="recorrenteSim"
+                    value="true"
+                    required
+                  />
+                  <label class="form-check-label" for="recorrenteSim">
+                    Sim
+                  </label>
+                </div>
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="recorrenteDespesa"
+                    id="recorrenteNao"
+                    value="false"
+                  />
+                  <label class="form-check-label" for="recorrenteNao">
+                    Não
+                  </label>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Total de Parcelas</label>
+                <input type="number" class="form-control" id="totalParcelas" />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Parcela Atual</label>
+                <input type="number" class="form-control" id="parcelaAtual" />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Categoria</label>
+                <select class="form-select" id="categoriaDespesa">
+                  <option value="CASA">Casa</option>
+                  <option value="ALIMENTACAO">Alimentação</option>
+                  <option value="TRANSPORTE">Transporte</option>
+                  <option value="SAUDE">Saúde</option>
+                  <option value="LAZER">Lazer</option>
+                  <option value="OUTROS">Outros</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Status</label>
+
+                <select class="form-select" id="statusDespesa" required>
+                  <option value="PENDENTE" selected>Pendente</option>
+                  <option value="PAGO">Pago</option>
+                  <option value="ATRASADO">Atrasado</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" form="formDespesa" class="btn btn-primary">
+              Salvar Despesa
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JavaScript Libraries -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="module" src="./js/guard.js"></script>
+
+    <script type="module">
+      import { logout } from "./js/auth.js";
+
+      document.getElementById("logout").addEventListener("click", logout);
+    </script>
+
+    <script type="module">
+      import { salvarReceita } from "./js/receitas.js";
+      import { salvarDespesa } from "./js/despesas.js";
+
+      document.getElementById("formReceita").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const descricao = document.getElementById("descricaoReceita").value;
+
+        const valor = parseFloat(document.getElementById("valorReceita").value);
+
+        const mes = document.getElementById("mesReceita").value;
+
+        const receita = {
+          descricao,
+          valor,
+          mes,
+        };
+
+        salvarReceita(receita);
+      });
+
+      document.getElementById("formDespesa").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const descricao = document.getElementById("descricaoDespesa").value;
+        const responsavel = document.getElementById("responsavelDespesa").value;
+        const valor = parseFloat(document.getElementById("valorDespesa").value);
+        const vencimento = document.getElementById("vencimentoDespesa").value;
+        const recorrente =
+          document.querySelector('input[name="recorrenteDespesa"]:checked')
+            .value === "true";
+        const totalParcelas = parseInt(
+          document.getElementById("totalParcelas").value,
+        );
+
+        const parcelaAtual = parseInt(
+          document.getElementById("parcelaAtual").value,
+        );
+
+        const categoria = document.getElementById("categoriaDespesa").value;
+
+        const status = document.getElementById("statusDespesa").value;
+
+        const despesa = {
+          descricao,
+          responsavel,
+          valor,
+          vencimento,
+          recorrente,
+          totalParcelas,
+          parcelaAtual,
+          categoria,
+          status,
+          createdAt: new Date(),
+        };
+
+        salvarDespesa(despesa);
+      });
+    </script>
+  </body>
+</html>
